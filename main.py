@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 
+import sys
+
 bibfile = "/home/rachael/Documents/School/references.bib"
-fields = [("type", "article"), ("name", ""),
-          ("authors", ""), ("title", ""),
-          ("date", ""), ("journal", ""),
-          ("volume", ""), ("issue", ""),
-          ("pages", ""), ("doi", "")]
+entry_fields = [("type", "article"), ("name", ""),
+                ("authors", ""), ("title", ""),
+                ("date", ""), ("journal", ""),
+                ("volume", ""), ("issue", ""),
+                ("pages", ""), ("doi", "")]
 
 
 def prompt_for_info(field):
@@ -16,10 +18,14 @@ def prompt_for_info(field):
     else:
         prompt += ": "
     data = input(prompt)
-    if not data:
-        if default:
-            data = default
-    return (label, data)
+    if data:
+        info = (label, data)
+    elif default:
+        # data = default
+        info = (label, default)
+    else:
+        return None
+    return info
 
 
 def extract(field, data):
@@ -30,7 +36,7 @@ def extract(field, data):
     return (value, data)
 
 
-def format(data):
+def format_entry(data):
     entry_type, data = extract("type", data)
     name, data = extract("name", data)
     # You need to use two {{s to print a literal {
@@ -56,3 +62,46 @@ def anything_else():
             user_fields.append((field, value))
             print("Got it.")
     return user_fields
+
+
+def get_info(fields):
+    data = []
+    field_iter = (prompt_for_info(field) for field in fields)
+    while True:
+        try:
+            data += next(field_iter)
+        except StopIteration:
+            data += anything_else()
+            break
+    return data
+
+
+def confirm(entry):
+    print()
+    print(entry)
+    print()
+    print("Does it look good?")
+    while True:
+        user_confirm = input("(Enter to save, \"a\" to abort): ")
+        if not user_confirm:
+            return True
+        elif user_confirm.lower() == "a":
+            print("Entry cancelled.")
+            sys.exit(0)
+        else:
+            print("Unrecognized input.")
+
+
+def save_entry(entry, bib_db):
+    with open(bib_db, "a+") as f:
+        f.write("")
+        f.write(entry)
+    return True
+
+
+def main(fields):
+    info = get_info(entry_fields)
+    bib_string = format_entry(info)
+    confirm(bib_string)
+    if save_entry(bib_string, bibfile):
+        print("Entry saved!")
