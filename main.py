@@ -25,6 +25,7 @@ SOFTWARE.
 """
 
 import sys
+import json
 
 bib_path = "/home/rachael/Documents/School/references.bib"
 db_path = "/home/rachael/Documents/School/refs-db.json"
@@ -144,14 +145,28 @@ def confirm(entry):
             print("Unrecognized input.")
 
 
-def save_bib(entry, bib_db):
-    with open(bib_db, "a+") as f:
+def save_bib(entry, bib_path):
+    with open(bib_path, "a+") as f:
         f.write("")
         f.write(entry)
     return True
 
 
-def main(fields, bibfile):
+def save_db(info, db_path):
+    try:
+        with open(db_path, "r") as f:
+            db = json.load(db_path)
+    except FileNotFoundError:
+        db = []
+    with open(db_path+".bak", "w") as f:
+        json.dump(db, f)
+    db = db.append(info)
+    with open(db_path, "w") as f:
+        json.dump(db, f)
+    return True
+
+
+def main(fields, bibfile, dbfile):
     info = get_info(entry_fields)
     info_dict = dict(info)
     info_dict["tags"], info_dict["notes"] = get_misc_info()
@@ -160,6 +175,13 @@ def main(fields, bibfile):
     info_dict["bibtex"] = bib_string
     if save_bib(bib_string, bibfile):
         print("BibTeX entry saved!")
+    else:
+        print("Could not save BibTeX entry.")
+    if save_db(info_dict, dbfile):
+        print("Database saved!")
+    else:
+        print("Could not save database.")
+
 
 if __name__ == "__main__":
-    main(entry_fields, bib_path)
+    main(entry_fields, bib_path, db_path)
