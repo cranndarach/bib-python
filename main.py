@@ -148,7 +148,7 @@ def confirm(entry):
 
 def save_bib(entry, bib_path):
     with open(bib_path, "a+") as f:
-        f.write("")
+        f.write("\n")
         f.write(entry)
     return True
 
