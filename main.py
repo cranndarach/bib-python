@@ -2,7 +2,7 @@
 
 import sys
 
-bibfile = "/home/rachael/Documents/School/references.bib"
+bib_path = "/home/rachael/Documents/School/references.bib"
 entry_fields = [("type", "article"), ("name", ""),
                 ("authors", ""), ("title", ""),
                 ("date", ""), ("journal", ""),
@@ -12,7 +12,7 @@ entry_fields = [("type", "article"), ("name", ""),
 
 def prompt_for_info(field):
     label, default = field
-    prompt = "{}".format(label.sentence())
+    prompt = "{}".format(label.capitalize())
     if default:
         prompt += " [\"{}\"]: ".format(default)
     else:
@@ -99,9 +99,12 @@ def save_entry(entry, bib_db):
     return True
 
 
-def main(fields):
+def main(fields, bibfile):
     info = get_info(entry_fields)
     bib_string = format_entry(info)
     confirm(bib_string)
     if save_entry(bib_string, bibfile):
         print("Entry saved!")
+
+if __name__ == "__main__":
+    main(entry_fields, bib_path)
