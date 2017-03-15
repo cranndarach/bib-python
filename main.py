@@ -27,6 +27,7 @@ SOFTWARE.
 import sys
 
 bib_path = "/home/rachael/Documents/School/references.bib"
+db_path = "/home/rachael/Documents/School/refs-db.json"
 entry_fields = [("type", "article"), ("name", ""),
                 ("authors", ""), ("title", ""),
                 ("date", ""), ("journal", ""),
@@ -152,10 +153,13 @@ def save_bib(entry, bib_db):
 
 def main(fields, bibfile):
     info = get_info(entry_fields)
+    info_dict = dict(info)
+    info_dict["tags"], info_dict["notes"] = get_misc_info()
     bib_string = format_bib(info)
     confirm(bib_string)
+    info_dict["bibtex"] = bib_string
     if save_bib(bib_string, bibfile):
-        print("Entry saved!")
+        print("BibTeX entry saved!")
 
 if __name__ == "__main__":
     main(entry_fields, bib_path)
