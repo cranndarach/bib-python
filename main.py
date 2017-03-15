@@ -24,13 +24,13 @@ def prompt_for_info(field):
         # data = default
         info = (label, default)
     else:
-        return None
+        return []
     return info
 
 
 def extract(field, data):
     # `data` is a list of (field, value) pairs
-    value = [val for key, val in data if key == field]
+    value = [val for key, val in data if key == field][0]
     pos = data.index((field, value))
     data.pop(pos)
     return (value, data)
@@ -40,13 +40,12 @@ def format_entry(data):
     entry_type, data = extract("type", data)
     name, data = extract("name", data)
     # You need to use two {{s to print a literal {
-    # entry = "@{} = {{{}}},\n".format(entry_type, name)
-    template = "{} = {}"
+    template = "{}={{{}}}"
     fields = [template.format(field, info) for field, info in data]
     fields_string = ",\n\t".join(fields)
-    entry = """@{} = {{{}}},
+    entry = """@{}={{{},
         {}
-    }}""".format(entry_type, name, fields_string)
+}}""".format(entry_type, name, fields_string)
     return entry
 
 
@@ -69,9 +68,18 @@ def get_info(fields):
     field_iter = (prompt_for_info(field) for field in fields)
     while True:
         try:
-            data += next(field_iter)
+            field = next(field_iter)
+            if field:
+                data.append(field)
+                del field
+            else:
+                None
         except StopIteration:
-            data += anything_else()
+            extra = anything_else()
+            if extra:
+                data += extra
+            else:
+                None
             break
     return data
 
