@@ -156,14 +156,14 @@ def save_bib(entry, bib_path):
 def save_db(info, db_path):
     try:
         with open(db_path, "r") as f:
-            db = json.load(db_path)
+            db = json.load(f)
     except FileNotFoundError:
         db = []
     with open(db_path+".bak", "w") as f:
-        json.dump(db, f)
+        json.dump(db, f, indent=4)
     db = db.append(info)
     with open(db_path, "w") as f:
-        json.dump(db, f)
+        json.dump(db, f, indent=4)
     return True
 
 
