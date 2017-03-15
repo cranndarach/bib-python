@@ -120,7 +120,7 @@ def get_tags():
     tag_prompt = "Tags (separated by commas): "
     tags = input(tag_prompt)
     tags_list = tags.split(",")
-    tags_list = [tag.split() for tag in tags_list]
+    tags_list = [tag.strip() for tag in tags_list]
     return tags_list
 
 
