@@ -154,16 +154,28 @@ def save_bib(entry, bib_path):
 
 
 def save_db(info, db_path):
-    try:
-        with open(db_path, "r") as f:
-            db = json.load(f)
-    except FileNotFoundError:
+    with open(db_path, "r") as f:
+        try:
+            db_backup = f.read()
+            # No need to use the buffer twice.
+            db = json.loads(db_backup)
+        except FileNotFoundError:
+            db_backup = ""
+            db = None
+    if not db:
         db = []
-    with open(db_path+".bak", "w") as f:
-        json.dump(db, f, indent=4)
-    db = db.append(info)
-    with open(db_path, "w") as f:
-        json.dump(db, f, indent=4)
+    try:
+        with open(db_path+".bak", "w") as f:
+            # json.dump(db, f, indent=4)
+            f.write(db_backup)
+        db.append(info)
+        with open(db_path, "w") as f:
+            json.dump(db, f, indent=4)
+    except Exception as exc:
+        with open(db_path, "w") as f:
+            f.write(db_backup)
+            print("Failed semi-gracefully.")
+            raise exc
     return True
 
 
