@@ -119,8 +119,9 @@ def get_misc_info():
 def get_tags():
     tag_prompt = "Tags (separated by commas): "
     tags = input(tag_prompt)
-    tag_list = tags.split(",").strip()
-    return tag_list
+    tags_list = tags.split(",")
+    tags_list = [tag.split() for tag in tags_list]
+    return tags_list
 
 
 def get_notes():
