@@ -60,7 +60,7 @@ def extract(field, data):
     return (value, data)
 
 
-def format_entry(data):
+def format_bib(data):
     entry_type, data = extract("type", data)
     name, data = extract("name", data)
     # You need to use two {{s to print a literal {
@@ -108,6 +108,25 @@ def get_info(fields):
     return data
 
 
+def get_misc_info():
+    tags = get_tags()
+    notes = get_notes()
+    return (tags, notes)
+
+
+def get_tags():
+    tag_prompt = "Tags (separated by commas): "
+    tags = input(tag_prompt)
+    tag_list = tags.split(",").strip()
+    return tag_list
+
+
+def get_notes():
+    notes_prompt = "Notes: "
+    notes = input(notes_prompt)
+    return notes
+
+
 def confirm(entry):
     print()
     print(entry)
@@ -124,7 +143,7 @@ def confirm(entry):
             print("Unrecognized input.")
 
 
-def save_entry(entry, bib_db):
+def save_bib(entry, bib_db):
     with open(bib_db, "a+") as f:
         f.write("")
         f.write(entry)
@@ -133,9 +152,9 @@ def save_entry(entry, bib_db):
 
 def main(fields, bibfile):
     info = get_info(entry_fields)
-    bib_string = format_entry(info)
+    bib_string = format_bib(info)
     confirm(bib_string)
-    if save_entry(bib_string, bibfile):
+    if save_bib(bib_string, bibfile):
         print("Entry saved!")
 
 if __name__ == "__main__":
